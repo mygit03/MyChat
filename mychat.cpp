@@ -250,6 +250,14 @@ bool MyChat::eventFilter(QObject *watched, QEvent *event)
     return QWidget::eventFilter(watched, event);
 }
 
+//调用软键盘:需将项目中的软键盘拷贝到应用程序所在目录
+void MyChat::on_tBtn_keyBoard_clicked()
+{
+    QString path = QCoreApplication::applicationDirPath();
+    path.append("/osk.exe");
+    QProcess::startDetached(path);
+}
+
 //粗体
 void MyChat::on_tBtn_Bold_clicked(bool checked)
 {

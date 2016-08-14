@@ -35,7 +35,9 @@ protected:
 
     virtual bool eventFilter(QObject *watched, QEvent *event);
 
-private slots:
+private slots:    
+    void on_tBtn_keyBoard_clicked();
+
     void on_tBtn_Bold_clicked(bool checked);
 
     void on_tBtn_Italic_clicked(bool checked);

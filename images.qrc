@@ -7,5 +7,6 @@
         <file>images/send.png</file>
         <file>images/save.png</file>
         <file>images/clear.png</file>
+        <file>images/keyBoard.png</file>
     </qresource>
 </RCC>
