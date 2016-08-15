@@ -27,6 +27,7 @@ public:
     QString getIP(QString localHost = "");  //获取IP地址
     QString getMessage();                   //获得要发送的消息
     void sendMsg();                         //发送消息
+    void saveMsgToFile();                   //保存聊天记录
 
 protected:
     virtual void keyPressEvent(QKeyEvent *e);
@@ -35,7 +36,7 @@ protected:
 
     virtual bool eventFilter(QObject *watched, QEvent *event);
 
-private slots:    
+private slots:
     void on_tBtn_keyBoard_clicked();
 
     void on_tBtn_Bold_clicked(bool checked);

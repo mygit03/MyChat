@@ -195,6 +195,24 @@ void MyChat::sendMsg()
     ui->textBrowser->append(msg);
 }
 
+void MyChat::saveMsgToFile()
+{
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QString fileName = QFileDialog::getSaveFileName(this, tr("保存文件"), path,
+                                                    tr("Word文档(*.doc);;网页(*.html)"));
+    if(fileName.isEmpty()){
+        return;
+    }
+    QFile file(fileName);
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text)){
+        QTextStream in(&file);
+        QString text = ui->textBrowser->toHtml();
+        in << text;
+        file.close();
+        QMessageBox::information(this, tr("提示"), tr("保存成功!"));
+    }
+}
+
 //键盘按下事件
 void MyChat::keyPressEvent(QKeyEvent *e)
 {
@@ -281,7 +299,7 @@ void MyChat::on_tBtn_Underline_clicked(bool checked)
 //设置颜色
 void MyChat::on_tBtn_color_clicked()
 {
-    color = QColorDialog::getColor(color, this);
+    color = QColorDialog::getColor(color, this, tr("字体颜色"));
     if(color.isValid()){
         ui->textEdit->setTextColor(color);
     }
@@ -295,20 +313,11 @@ void MyChat::on_tBtn_sendFile_clicked()
 //保存聊天记录
 void MyChat::on_tBtn_saveFile_clicked()
 {
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    QString fileName = QFileDialog::getSaveFileName(this, tr("保存文件"), path,
-                                                    tr("Word文档(*.doc)"));
-    if(fileName.isEmpty()){
+    if(ui->textBrowser->document()->isEmpty()){
+        QMessageBox::warning(0, tr("警告"), tr("聊天记录为空!"));
         return;
     }
-    QFile file(fileName);
-    if(file.open(QIODevice::WriteOnly | QIODevice::Text)){
-        QTextStream in(&file);
-        QString text = ui->textBrowser->toHtml();
-        in << text;
-        file.close();
-        QMessageBox::information(this, tr("提示"), tr("保存成功!"));
-    }
+    saveMsgToFile();
 }
 
 //清空聊天记录
