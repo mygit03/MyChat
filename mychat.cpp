@@ -12,10 +12,6 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QFileDialog>
-#include <QStandardPaths>
-#include <QPrinter>
-#include <QPainter>
-#include <QTextBlock>
 #include <QMenu>
 #include <QAction>
 
@@ -214,9 +210,6 @@ void MyChat::keyReleaseEvent(QKeyEvent *e)
 {
     if(e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return){
         qDebug() << "key release Enter~";
-        if(isEnter){
-            sendMsg();
-        }
     }else if(e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return && (e->modifiers() & Qt::ControlModifier)){
         qDebug() << "key release Ctrl+Enter~";
     }
@@ -225,29 +218,34 @@ void MyChat::keyReleaseEvent(QKeyEvent *e)
 //事件过滤器
 bool MyChat::eventFilter(QObject *watched, QEvent *event)
 {
-    if(watched == ui->textEdit){
-        if(event->type() == QEvent::KeyPress){
-            QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-            if(keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return){
-                qDebug() << "event Enter~";
-                if(isEnter){
-                    ui->textEdit->setLineWrapMode(QTextEdit::NoWrap);
-                    return true;
-                }else{
-                    ui->textEdit->setLineWrapMode(QTextEdit::WidgetWidth);
-                    return false;
-                }
-            }else if(keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return &&
-                    (keyEvent->modifiers() & Qt::ControlModifier)){
-                qDebug() << "event Ctrl+Enter~";
-//                if(!isEnter){
-//                    sendMsg();
-//                }
-                return true;
+    Q_ASSERT(watched == ui->textEdit);
+
+    if (event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if (keyEvent->key() == Qt::Key_Return && (keyEvent->modifiers() & Qt::ControlModifier))
+        {
+            qDebug() << "event Ctrl+Enter~";
+            if(!isEnter){
+                sendMsg();
             }
+            return true;
+        }
+        if (keyEvent->key() == Qt::Key_Return){
+            qDebug() << "event Enter!";
+            if(isEnter){
+                ui->textEdit->setLineWrapMode(QTextEdit::NoWrap);
+                sendMsg();
+            }else{
+                //设置textEdit换行
+                QTextCursor textCursor = ui->textEdit->textCursor();
+                textCursor.insertText("\n");
+                ui->textEdit->verticalScrollBar()->setValue(ui->textEdit->maximumHeight());
+            }
+            return true;
         }
     }
-    return QWidget::eventFilter(watched, event);
+    return false;
 }
 
 //调用软键盘:需将项目中的软键盘拷贝到应用程序所在目录
